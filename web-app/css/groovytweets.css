@@ -1,0 +1,133 @@
+a, a:hover, a:active, a:focus, a:visited {
+    color: black;
+    text-decoration: underline;
+}
+
+.sidebar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sidebar a {
+   font-family: georgia;
+   font-size: 138.5%;
+   font-style: italic;
+   display:block;
+}
+
+.main {
+    border-right: 1px solid #CCCCCC;
+}
+
+.footer {
+    border-top: 1px solid #CCCCCC;
+    padding: 5px;
+    font-family: georgia;
+    font-size: 108%;
+    font-style: italic;
+    text-align: center;
+}
+
+#logo {
+    margin-top: 15px;
+}
+
+.friendsWrapper {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    font-size: 138.5%;
+    font-family: georgia;
+}
+
+.friendsWrapper a {
+    text-decoration: none;
+}
+
+.aboutWrapper {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    font-size: 138.5%;
+    font-family: georgia;
+}
+
+.aboutWrapper a {
+    text-decoration: none;
+}
+
+.aboutWrapper h1 {
+    margin-top: 1em;
+    font-size: 153.9%;
+}
+
+.aboutWrapper p {
+    margin-bottom: 0.5em;
+}
+
+.tweet {
+    text-align:left;
+    width: 500px;
+    font-size: 167%;
+    font-family: georgia;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    -moz-border-radius-topright: 15px;
+    -moz-border-radius-bottomleft: 15px;
+    -webkit-border-top-right-radius: 15px;
+    -webkit-border-bottom-left-radius: 15px;
+}
+
+.textWrap {
+    margin-left: 58px;
+}
+
+.textWrap .userImage {
+    margin-left: -58px;
+    float:left;
+    width: 48px;
+    height: 48px;
+}
+
+.userScreenName {
+    font-weight: bolder;
+}
+
+.userScreenName .screenNameLink, .statusText .screenNameLink {
+    text-decoration: none;
+}
+
+.userRealName {
+    font-style: italic;
+}
+
+.statusText {
+    
+}
+
+.importance0 {
+    background-color: #E8E8E8;
+}
+
+.importance1 {
+    background-color: #FFFF66;
+}
+
+.importance2 {
+    background-color: #FF9900;
+}
+
+.importance3 {
+    background-color: #FF3300;
+}
+
+.importance4 {
+    background-color: #FF0000;
+}
+
+.importance5 {
+    background-color: #FF0000;
+}

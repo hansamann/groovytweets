@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/cron/updateTweets</url>
+    <description>Update tweets from friends every minute</description>
+    <schedule>every 1 minutes</schedule>
+  </cron>
+  <cron>
+    <url>/cron/updateFriends</url>
+    <description>Update friends list every hour</description>
+    <schedule>every 1 hours</schedule>
+  </cron>
+  <cron>
+    <url>/cron/scanRandomUserTimelines</url>
+    <description>Scan random user timelines every 30 minutes</description>
+    <schedule>every 30 minutes</schedule>
+  </cron>
+</cronentries>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datastore-indexes autoGenerate="true">
+    <datastore-index kind="Tweet" ancestor="false">
+        <property name="added" direction="desc" />
+        <property name="statusId" direction="desc" />
+        <property name="importance" direction="desc" />
+    </datastore-index>
+</datastore-indexes>
