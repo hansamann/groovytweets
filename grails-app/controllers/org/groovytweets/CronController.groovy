@@ -56,9 +56,14 @@ class CronController
                                     tweetInstance.importance = tweetInstance.importance + 1
 
                                     try{
-                                        jpaTemplate.persist(tweetInstance)
+                                        jpaTemplate.persist(tweetInstance)                                        
                                     } catch( Exception e ){
                                         render("Unable to update the original tweet for a RT match")
+                                    }
+
+                                    if (tweetInstance.importance == 1 )
+                                    {
+                                        twitterService.updateStatus("RT @${tweetInstance.userScreenName}: ${tweetInstance.statusText}")
                                     }
 
                                 }
@@ -108,7 +113,7 @@ class CronController
             def tweets = twitterService.getUserTimeline(user.screenName)
             def groovyTweets = tweets.findAll { it.statusText =~ pattern }
             //get replymap, filter by at least two mentions AND not already in friends list in groovy tweets
-            def replyMap = getReplyMap(groovyTweets).findAll { !(it.key in screenNameList) && it.value >= 2 }
+            def replyMap = getReplyMap(groovyTweets).findAll { !(it.key in screenNameList) && it.value >= 3 }
 
             replyMap.each { screenName, mentions ->
                def newFriend = twitterService.follow(screenName)
@@ -127,6 +132,26 @@ class CronController
         }
         else
             response.sendError(503, "Friends currently not available in memcache...")
+    }
+
+    def topTweets24 = {
+        def  tweets = []
+        jpaTemplate.execute( { entityManager ->
+                def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
+                query.maxResults = 500
+                def yesterday = new Date().minus(1)
+                tweets = query.resultList.findAll { it.importance > 0 && it.added.after(yesterday)}.sort {a, b -> (a.statusId > b.statusId) ? -1 : 1 }
+
+            } as JpaCallback )
+
+        def tweetStrings = tweets.collect { it.toString() }
+        mailService.sendAdminMail("[groovytweets] topTweets24", tweetStrings.join('\n\n'))
+
+        def cronHeader = request.getHeader('X-AppEngine-Cron')
+        mailService.sendAdminMail("[groovytweets] X-AppEngine-Cron: ${cronHeader}", cronHeader ?: 'no header')
+
+
+        render(view:'showTweets', model:[tweets:tweets])
     }
 
     def showTweets = {

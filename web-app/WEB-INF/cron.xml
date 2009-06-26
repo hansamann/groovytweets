@@ -15,4 +15,9 @@
     <description>Scan random user timelines every 30 minutes</description>
     <schedule>every 30 minutes</schedule>
   </cron>
+  <cron>
+    <url>/cron/topTweets24</url>
+    <description>Mail top tweets of the last 24h 17:45 PDT</description>
+    <schedule>every day 10:45</schedule>
+  </cron>
 </cronentries>

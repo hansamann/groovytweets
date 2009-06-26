@@ -36,6 +36,11 @@ class Tweet {
         importance()
     }
 
+    def String toString()
+    {
+        return "User: ${userScreenName}, ${added}, Status: ${statusId}, Importance: ${importance}, Text: ${statusText}"
+    }
+
     def hasRealName()
     {
         userRealName != userScreenName

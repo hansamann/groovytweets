@@ -12,7 +12,7 @@
   </head>
   <body>
   <g:each in="${tweets}" var="t">
-    [${t.id}] ${t.userScreenName}: ${t.statusText} (${t.statusId})<br/>
+    [${t.id}, ${t.added}] ${t.userScreenName}: ${t.statusText} (${t.statusId})<br/>
   </g:each>
 
   </body>

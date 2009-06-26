@@ -115,4 +115,19 @@ class TwitterService {
         }
     }
 
+    def updateStatuses(statusTexte)
+    {
+        def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
+
+        statusTexte.each
+        { statusText
+            def status = twitter.updateStatus(statusText)
+        }
+    }
+
+    def updateStatus(statusText)
+    {
+        updateStatuses([statusText])
+    }
+
 }
