@@ -73,10 +73,12 @@
       We will then automatically add it to groovytweets in case it was relevant. 
       </p>
       <p>
-      Third, start following <a target="_blank" href="http://twitter.com/groovytweets">@groovytweets</a>. The plan
-      is to RT the top messages once a day or after a tweet has achieved a certain relevance level. Be sure to get
-      those tweets. 
+      Third, start following <a target="_blank" href="http://twitter.com/groovytweets">@groovytweets</a>. We currently
+      'retweet' Tweets once they reach the first relevance level and of course do not count these retweets into the
+      tweets we already track. This means: following groovytweets gives you the trending tweets. You should still
+      participate in retweeting original tweets as this is what allows us to discover trending tweets.
       </p>
     </div>
+
     </body>
 </html>

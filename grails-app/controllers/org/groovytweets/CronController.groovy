@@ -15,7 +15,7 @@ class CronController
     def transactionTemplate
 
     //consider word boundaries with \b but let's try first'
-    def pattern = Pattern.compile(/groovy|grails|griffon|gr8|gorm|gsql|gsp|\bgant|gradle|groosh|builder|plugin|launcher|xmlrpc/, Pattern.CASE_INSENSITIVE)
+    def pattern = Pattern.compile(/groovy|grails|griffon|gr8|gr\*|gorm|gsql|gsp|\bgant|gradle|groosh|builder|plugin|launcher|xmlrpc/, Pattern.CASE_INSENSITIVE)
 
     def index = { redirect(action:'showTweets', params:params)}
 
@@ -39,7 +39,7 @@ class CronController
                 def retweetResult = isRetweet(tweet)
                 if (retweetResult)
                 {
-                    //this is a RT / via retweet
+                    //this is a RT
 
                     //find original(s)
                     def existingTweets = findExistingTweets(retweetResult.text, retweetResult.screenName)
@@ -75,14 +75,14 @@ class CronController
                     }
 
                 }
-                else
+                else if (!tweet.userScreenName == 'groovytweets') //exclude our RT's
                 {
                     transactionTemplate.execute(
-                        { status ->
-                            jpaTemplate.persist(tweet)
-                            jpaTemplate.flush()
-                            added++
-                        } as TransactionCallback )
+                    { status ->
+                        jpaTemplate.persist(tweet)
+                        jpaTemplate.flush()
+                        added++
+                    } as TransactionCallback )
                 }
             }
         }
@@ -277,8 +277,11 @@ class CronController
 
     def isRetweet(Tweet tweet)
     {
-        //checking for RT @user: or RT @user <message>
-        //some people also do this: RT: @user <message>
+        //we do not count our own retweets!
+        if (tweet.userScreenName == 'groovytweets')
+            return null
+
+
         def m
         def r = [:]
 
@@ -354,7 +357,7 @@ class CronController
 
             //we do not track ourselves :-)
             if (screenName == 'groovytweets')
-            return 0
+                return 0
 
             //lookup screenName in ScreenName entity
             transactionTemplate.execute(

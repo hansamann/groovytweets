@@ -115,19 +115,23 @@ class TwitterService {
         }
     }
 
-    def updateStatuses(statusTexte)
+
+
+    def updateStatus(text)
     {
         def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
 
-        statusTexte.each
-        { statusText
-            def status = twitter.updateStatus(statusText)
+        try
+        {
+            def status = twitter.updateStatus(text)
+            return status
         }
-    }
+        catch (TwitterException e)
+        {
+            log.warn("Unable to update status: " + text, e)
+            return null
+        }
 
-    def updateStatus(statusText)
-    {
-        updateStatuses([statusText])
     }
 
 }

@@ -45,7 +45,7 @@
     </div>
     <div id="ft" class="footer">
       <!-- footer -->
-    groovytweets 0.1 on Grails 1.1.1 | by <a href="http://www.svenhaiges.de">Sven Haiges</a> | follow me <a href="http://twitter.com/hansamann">@hansamann</a>
+    groovytweets v<g:meta name="app.version"/> on Grails <g:meta name="app.grails.version"/> with app-engine plugin v<g:meta name="plugins.app-engine"/> | by <a href="http://www.svenhaiges.de">Sven Haiges</a> | follow me <a href="http://twitter.com/hansamann">@hansamann</a>
     </div>
   </div>
 
