@@ -41,6 +41,9 @@
         <g:link action="listImportant" class="linkitem">Important Tweets</g:link>
         <g:link action="friends" class="linkitem">Friends</g:link>
         <g:link action="about" class="linkitem">About</g:link>
+        <br/>
+        <a href="http://feeds.groovytweets.org/latestgroovytweets" target="_blank" class="linkitem">RSS Latest</a>
+        <a href="http://feeds.groovytweets.org/latestgroovytweets"><img src="http://feeds.feedburner.com/~fc/latestgroovytweets?bg=FF3300&amp;fg=000033&amp;anim=1" height="26" width="88" style="border:0" alt="" /></a>
       </div>
     </div>
     <div id="ft" class="footer">

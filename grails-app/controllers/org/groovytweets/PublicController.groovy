@@ -20,9 +20,7 @@ class PublicController {
                 query.maxResults = 50
                 tweetInstanceList = query.resultList
             } as JpaCallback )
-
         [tweets:tweetInstanceList]
-    
     }
 
     def listImportant = {
@@ -40,7 +38,7 @@ class PublicController {
     def pullTweets = {
         //unknown bug, maybe some browsers have problems with the list50.gsp page/javascript
         if (params.id == 'undefined')
-            return
+        return
 
         def latest = params.id.toLong()
 
@@ -69,7 +67,7 @@ class PublicController {
                 def tweetCount = params.id.toLong()
 
                 if (tweetCount > 150)
-                    tweetCount = 150
+                tweetCount = 150
 
                 def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
                 query.maxResults = tweetCount
@@ -80,12 +78,38 @@ class PublicController {
 
     def friends = {
         if (memcacheService.containsKey('friends'))
-            [friends:memcacheService.get('friends')]
+        [friends:memcacheService.get('friends')]
         else
-            [friends:[]]
+        [friends:[]]
     }
 
     def about = {}
 
+    def feedLatest =
+    {
+        //TODO pull data from memcache and only update it every 15 minutes
+        def  tweets =[]
+        jpaTemplate.execute( { entityManager ->
+                def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
+                query.maxResults = 50
+                tweets = query.resultList
+            } as JpaCallback )
 
+        render(feedType:"rss", feedVersion:"2.0") {
+            title = "groovytweets latest tweets"
+            link = "http://www.groovytweets.org"
+            description = "Latest tweets from the Groovy community, updated every 15 minutes."
+
+            tweets.each() { tweet ->
+                entry(tweet.statusText) {
+                    title = "${tweet.userScreenName} (${tweet.userRealName}): ${tweet.statusText}}"
+                    link = "http://twitter.com/${tweet.userScreenName}/statuses/${tweet.statusId}"
+                    publishedDate = tweet.added
+                    author = tweet.userRealName
+                    content(tweet.toString())
+                }
+            }
+        }
+
+    }
 }
