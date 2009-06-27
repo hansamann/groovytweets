@@ -75,7 +75,7 @@ class CronController
                     }
 
                 }
-                else if (!tweet.userScreenName == 'groovytweets') //exclude our RT's
+                else if (!tweet.statusText.startsWith('RT'))
                 {
                     transactionTemplate.execute(
                     { status ->

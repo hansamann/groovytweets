@@ -67,6 +67,10 @@ class PublicController {
     def pullRelevances = {
         jpaTemplate.execute( { entityManager ->
                 def tweetCount = params.id.toLong()
+
+                if (tweetCount > 150)
+                    tweetCount = 150
+
                 def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
                 query.maxResults = tweetCount
                 def statusRelevanceMap = query.resultList.collect {tweet -> [tweet.statusId, tweet.importance]}
