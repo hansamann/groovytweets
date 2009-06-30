@@ -1,17 +1,17 @@
 import com.google.appengine.api.users.*
 
 /**
- *
- * @author hansa
+ * @author Sven Haiges <hansamann@yahoo.de>
  */
 class GroovyTweetFilters {
     def filters = {
         securityFilter(controller:'*', action:'*'){
             before = {
-                if (controllerName == 'public')
+                if (controllerName == 'public' || controllerName == 'feed')
                     return true
 
-                if (controllerName == 'cron')
+                def cronHeader = request.getHeader('X-AppEngine-Cron')
+                if (controllerName == 'cron' && cronHeader == 'true')
                     return true
 
                 def userService = UserServiceFactory.userService

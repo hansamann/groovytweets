@@ -1,3 +1,18 @@
+/*
+ * Copyright 2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ */
+
 package org.groovytweets
 
 import java.util.regex.Pattern
@@ -5,6 +20,9 @@ import com.google.appengine.api.datastore.*
 import org.springframework.transaction.support.*
 import org.springframework.orm.jpa.*
 
+/**
+ * @author Sven Haiges <hansamann@yahoo.de>
+ */
 class CronController
 {
 
@@ -21,7 +39,7 @@ class CronController
 
     def updateTweets = {
         log.debug "updateTweets..."
-        def tweets = twitterService.getTweets()
+        def tweets = twitterService.getTweets().reverse()
         log.info "got ${tweets.size()} tweets..."
         
         
@@ -40,6 +58,9 @@ class CronController
                 if (retweetResult)
                 {
                     //this is a RT
+                    //... is allowed to truncate oversize original messages
+                    if (retweetResult.text && retweetResult.text.endsWith('...'))
+                        retweetResult.text = retweetResult.text[0..-4] //remove ...
 
                     //find original(s)
                     def existingTweets = findExistingTweets(retweetResult.text, retweetResult.screenName)
@@ -141,17 +162,38 @@ class CronController
                 query.maxResults = 500
                 def yesterday = new Date().minus(1)
                 tweets = query.resultList.findAll { it.importance > 0 && it.added.after(yesterday)}.sort {a, b -> (a.statusId > b.statusId) ? -1 : 1 }
-
             } as JpaCallback )
 
         def tweetStrings = tweets.collect { it.toString() }
         mailService.sendAdminMail("[groovytweets] topTweets24", tweetStrings.join('\n\n'))
 
-        def cronHeader = request.getHeader('X-AppEngine-Cron')
-        mailService.sendAdminMail("[groovytweets] X-AppEngine-Cron: ${cronHeader}", cronHeader ?: 'no header')
+        //def cronHeader = request.getHeader('X-AppEngine-Cron')
+        //mailService.sendAdminMail("[groovytweets] X-AppEngine-Cron: ${cronHeader}", cronHeader ?: 'no header')
 
 
         render(view:'showTweets', model:[tweets:tweets])
+    }
+
+    def updateFeeds = {
+        def latestTweets = []
+        jpaTemplate.execute( { entityManager ->
+                def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
+                query.maxResults = 50
+                latestTweets = query.resultList
+            } as JpaCallback )
+
+        memcacheService.put('latestTweets', latestTweets.collect{it.toMap()})
+        
+        def importantTweets = []
+        jpaTemplate.execute( { entityManager ->
+                def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
+                query.maxResults = 500
+                importantTweets = query.resultList.findAll { it.importance > 0}.sort {a, b -> (a.statusId > b.statusId) ? -1 : 1 }
+            } as JpaCallback )
+
+        memcacheService.put('importantTweets', importantTweets.collect{it.toMap()})
+
+        render "done - saved latest tweets (${latestTweets.size()}) and important tweets (${importantTweets.size()}) to memcache for feeds"
     }
 
     def showTweets = {
@@ -285,7 +327,7 @@ class CronController
         def m
         def r = [:]
 
-        m = tweet.statusText =~ /RT:? @([A-Za-z0-9_]+):?\s{1,}(.*)/
+        m = tweet.statusText =~ /RT:?\s?@([A-Za-z0-9_]+):?\s?(.*)/
         if (m)
         {
             r.screenName = m[0][1]
@@ -308,7 +350,7 @@ class CronController
             return r
         }
 
-        m = tweet.statusText =~ /^♺ @([A-Za-z0-9_]+):?\s{1,}(.*)/
+        m = tweet.statusText =~ /^♺\s?@([A-Za-z0-9_]+):?\s?(.*)/
         if (m)
         {
             r.screenName = m[0][1]

@@ -18,6 +18,11 @@
   <cron>
     <url>/cron/topTweets24</url>
     <description>Mail top tweets of the last 24h 17:45 PDT</description>
-    <schedule>every day 10:45</schedule>
+    <schedule>every day 17:45</schedule>
+  </cron>
+  <cron>
+    <url>/cron/updateFeeds</url>
+    <description>Update the latest and important feed data every 15 minutes</description>
+    <schedule>every 15 minutes</schedule>
   </cron>
 </cronentries>

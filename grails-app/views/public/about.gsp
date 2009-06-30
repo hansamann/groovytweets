@@ -27,11 +27,11 @@
     <div class="aboutWrapper">
       <p>groovytweets is an effort to provide the groovy community with up to date news via twitter.
         <a target="_blank" href="http://twitter.com/groovytweets">@groovytweets</a> follows the most
-        influencial people in the groovy community and filters their tweets for relevant content. This
-        means you do not have to follow 150+ people and get spammed by irrelevant messages; instead just check
-        groovytweets a couple of times a day to get your dose of groovy news.<br/>
+        influencial people in the groovy community and filters their tweets for relevant content.
+        <br/>
         Besides filtering, retweets within this community are used as a relevancy indicator. A message that has been
-        retweetet often is more important and visually highlighted. Current friends of groovytweets are regularly
+        retweetet often is likely more important and is visually highlighted on the groovytweets website. Also, current
+        friends of groovytweets are regularly
         scanned for @replies to other usernames. If a certain treshold has been reached, these new usernames are
         being followed automatically. This ensures we keep following influencial people, even if they change
         over time.
@@ -43,7 +43,7 @@
       to the tweet database and shown on the groovytweets homepage.
       </p>
 
-      <h1>What retweet formats are supported?</h1>
+      <h1>How can I participate>?</h1>
       <p>To have your retweets accepted, please first make sure that groovytweets is following you. If not, we cannot
       get your retweets and cannot use them to make the original tweet more important. If we do not follow you already,
       check the <g:link action="friends">friends page</g:link> to find out how you can suggest your own twitter username as a new friend.
@@ -78,6 +78,17 @@
       tweets we already track. This means: following groovytweets gives you the trending tweets. You should still
       participate in retweeting original tweets as this is what allows us to discover trending tweets.
       </p>
+      Fourth, spread the love. See our headline animators...
+
+      <h1>groovy love: headline animators</h1>
+      <p>Feel free to include these feedburner headline animators on your own blog or site. The animators display
+      the last 5 entries from the important tweets RSS feed. Thanx for supporting groovytweets!</p>
+      468x60
+      <p style="margin-top:10px; margin-bottom:0; padding-bottom:0; text-align:center; line-height:0"><a target="_blank" href="http://feeds.feedburner.com/~r/importantgroovytweets/~6/3"><img src="http://feeds.feedburner.com/importantgroovytweets.3.gif" alt="groovytweets ::: important tweets" style="border:0"></a></p><p style="margin-top:5px; padding-top:0; font-size:x-small; text-align:center"><a href="http://feedburner.google.com/fb/a/headlineanimator/install?id=poj4rupefrgj6m7i2imh4c5gck&amp;w=3" onclick="window.open(this.href, 'haHowto', 'width=520,height=600,toolbar=no,address=no,resizable=yes,scrollbars'); return false" target="_blank">&uarr; Grab this Headline Animator</a></p>
+      234x60
+      <p style="margin-top:10px; margin-bottom:0; padding-bottom:0; text-align:center; line-height:0"><a target="_blank" href="http://feeds.feedburner.com/~r/importantgroovytweets/~6/1"><img src="http://feeds.feedburner.com/importantgroovytweets.1.gif" alt="groovytweets" style="border:0"></a></p><p style="margin-top:5px; padding-top:0; font-size:x-small; text-align:center"><a href="http://feedburner.google.com/fb/a/headlineanimator/install?id=poj4rupefrgj6m7i2imh4c5gck&amp;w=1" onclick="window.open(this.href, 'haHowto', 'width=520,height=600,toolbar=no,address=no,resizable=yes,scrollbars'); return false" target="_blank">&uarr; Grab this Headline Animator</a></p>
+      180x100
+      <p style="margin-top:10px; margin-bottom:0; padding-bottom:0; text-align:center; line-height:0"><a target="_blank" href="http://feeds.feedburner.com/~r/importantgroovytweets/~6/2"><img src="http://feeds.feedburner.com/importantgroovytweets.2.gif" alt="groovytweets" style="border:0"></a></p><p style="margin-top:5px; padding-top:0; font-size:x-small; text-align:center"><a href="http://feedburner.google.com/fb/a/headlineanimator/install?id=poj4rupefrgj6m7i2imh4c5gck&amp;w=2" onclick="window.open(this.href, 'haHowto', 'width=520,height=600,toolbar=no,address=no,resizable=yes,scrollbars'); return false" target="_blank">&uarr; Grab this Headline Animator</a></p>
     </div>
 
     </body>
