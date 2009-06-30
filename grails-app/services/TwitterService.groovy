@@ -152,4 +152,36 @@ class TwitterService {
 
     }
 
+    def getMentions()
+    {
+        def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
+
+        def stat = twitter.rateLimitStatus()
+
+        if (stat.remainingHits > 65)
+        {
+            def paging
+            def memKey = 'lastMentionStatusId'
+            if (memcacheService.containsKey(memKey))
+                paging = new Paging(sinceId:(Long)memcacheService.get(memKey), count:200)
+            else
+                paging = new Paging(count:200)
+
+            def mentions = twitter.getMentions(paging)
+
+            //find new latest
+            def latest = mentions.max {a,b -> a == b ? 0 : a.id < b.id ? -1: 1}
+            if (latest) {
+                memcacheService.put(memKey, (Long)latest.id)
+            }
+
+            return mentions
+        }
+        else
+        {
+            log.info("Less than 65 remaining hits this hour, not getting mentions")
+            return []
+        }
+    }
+
 }

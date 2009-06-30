@@ -25,4 +25,9 @@
     <description>Update the latest and important feed data every 15 minutes</description>
     <schedule>every 15 minutes</schedule>
   </cron>
+  <cron>
+    <url>/cron/updateMentions</url>
+    <description>scan for suggst @username every 2 hours</description>
+    <schedule>every 2 hours</schedule>
+  </cron>
 </cronentries>

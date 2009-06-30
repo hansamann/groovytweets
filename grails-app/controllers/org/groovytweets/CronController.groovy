@@ -175,6 +175,7 @@ class CronController
     }
 
     def updateFeeds = {
+        log.debug('updateFeeds')
         def latestTweets = []
         jpaTemplate.execute( { entityManager ->
                 def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
@@ -194,6 +195,26 @@ class CronController
         memcacheService.put('importantTweets', importantTweets.collect{it.toMap()})
 
         render "done - saved latest tweets (${latestTweets.size()}) and important tweets (${importantTweets.size()}) to memcache for feeds"
+    }
+
+    def updateMentions = {
+        log.debug 'updateMentions'
+
+        def mentions = twitterService.getMentions()
+        def count = 0
+        mentions.each {
+            status ->
+            def m = status.text =~ /@groovytweets suggest @([A-Za-z0-9_]+)/
+            if (m)
+            {
+                def screenName = m[0][1]
+                mailService.sendAdminMail("[groovytweets] suggest: @${screenName}", status.text)
+                count++
+                
+            }
+        }
+
+        render "done - got ${mentions.size()} new mentions, found ${count} suggestions"
     }
 
     def showTweets = {
