@@ -5,4 +5,12 @@
         <property name="statusId" direction="desc" />
         <property name="importance" direction="desc" />
     </datastore-index>
+    <datastore-index kind="Tweet" ancestor="false">
+        <property name="userScreenName" direction="asc" />
+        <property name="importance" direction="desc" />
+    </datastore-index>
+    <datastore-index kind="Tweet" ancestor="false">
+        <property name="added" direction="asc" />
+        <property name="importance" direction="desc" />
+    </datastore-index>
 </datastore-indexes>

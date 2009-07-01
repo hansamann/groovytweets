@@ -41,7 +41,7 @@ class PublicController {
     }
 
     def listImportant = {
-        def  tweetInstanceList = []
+        def tweetInstanceList = []
         jpaTemplate.execute( { entityManager ->
                 def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
                 query.maxResults = 500

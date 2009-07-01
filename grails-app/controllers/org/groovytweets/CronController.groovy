@@ -33,7 +33,7 @@ class CronController
     def transactionTemplate
 
     //consider word boundaries with \b but let's try first'
-    def pattern = Pattern.compile(/groovy|grails|griffon|gr8|gr\*|gorm|gsql|gsp|\bgant|gradle|groosh|builder|plugin|launcher|xmlrpc/, Pattern.CASE_INSENSITIVE)
+    def pattern = Pattern.compile(/groovy|grails|griffon|gr8|gr\*|gorm|gsql|gsp|\bgant|gradle|groosh|builder|plugin|launcher|xmlrpc|parallelizer/, Pattern.CASE_INSENSITIVE)
 
     def index = { redirect(action:'showTweets', params:params)}
 
