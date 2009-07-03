@@ -232,7 +232,16 @@ class CronController
         def labels = []
         def data = []
         replies.each { labels << it.screenName; data << it.replyCount}
-        def chartURL = base + '&chxl=0:|' + labels.reverse().join('|') + '&chd=t:' + data.join(',')
+        
+        def max = data[0]
+        def axisLabel = ''
+        def intervals = (int)(max/10)
+        (0..intervals).each { axisLabel += "|${it*10}" }
+        axisLabel = axisLabel + "|${max}"
+        def label1 = '|1:' + axisLabel
+        def label2 = '|2:' + axisLabel
+
+        def chartURL = base + '&chxl=0:|' + labels.reverse().join('|') + label1 + label2 + '&chd=t:' + data.join(',') + "&chds=0,${max}"
 
         //replace & with &amp;
         chartURL = chartURL.replace('&', '&amp;')
