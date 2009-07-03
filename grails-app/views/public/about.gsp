@@ -43,7 +43,7 @@
       to the tweet database and shown on the groovytweets homepage.
       </p>
 
-      <h1>How can I participate>?</h1>
+      <h1>How can I participate?</h1>
       <p>To have your retweets accepted, please first make sure that groovytweets is following you. If not, we cannot
       get your retweets and cannot use them to make the original tweet more important. If we do not follow you already,
       check the <g:link action="friends">friends page</g:link> to find out how you can suggest your own twitter username as a new friend.

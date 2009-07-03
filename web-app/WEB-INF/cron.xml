@@ -27,7 +27,12 @@
   </cron>
   <cron>
     <url>/cron/updateMentions</url>
-    <description>scan for suggst @username every 2 hours</description>
+    <description>scan for suggest @username every 2 hours</description>
     <schedule>every 2 hours</schedule>
+  </cron>
+  <cron>
+    <url>/cron/updatePopularity</url>
+    <description>update the popularity chart URL every 20 minutes</description>
+    <schedule>every 20 minutes</schedule>
   </cron>
 </cronentries>

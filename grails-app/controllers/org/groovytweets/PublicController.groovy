@@ -95,11 +95,17 @@ class PublicController {
 
     def friends = {
         if (memcacheService.containsKey('friends'))
-        [friends:memcacheService.get('friends')]
+            [friends:memcacheService.get('friends')]
         else
-        [friends:[]]
+            [friends:[]]
     }
 
     def about = {}
     
+    def popular = {
+        if (memcacheService.containsKey('popularityChartURL'))
+            [popularityChartURL:memcacheService.get('popularityChartURL')]
+        else
+            [popularityChartURL:null]
+    }
 }

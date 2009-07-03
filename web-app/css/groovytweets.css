@@ -40,9 +40,24 @@ a, a:hover, a:active, a:focus, a:visited {
     font-family: georgia;
 }
 
+
 .friendsWrapper a {
     text-decoration: none;
 }
+
+.popularWrapper {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    font-size: 138.5%;
+    font-family: georgia;
+}
+
+
+.popularWrapper a {
+    text-decoration: none;
+}
+
 
 .aboutWrapper {
     margin-top: 5px;
@@ -131,3 +146,24 @@ a, a:hover, a:active, a:focus, a:visited {
 .importance5 {
     background-color: #FF0000;
 }
+
+.importance6 {
+    background-color: #FF0000;
+}
+
+.importance7 {
+    background-color: #FF0000;
+}
+
+.importance8 {
+    background-color: #FF0000;
+}
+
+.importance9 {
+    background-color: #FF0000;
+}
+
+.importance10 {
+    background-color: #FF0000;
+}
+

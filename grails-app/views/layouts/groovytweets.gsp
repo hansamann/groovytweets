@@ -15,7 +15,9 @@
   <div id="doc" class="yui-t4">
     <div id="hd">
       <!-- header -->
-      <img id="logo" src="${resource(dir:'images/groovytweets',file:'groovytweets_logo.png')}"/>
+      <a href="/">
+        <img id="logo" src="${resource(dir:'images/groovytweets',file:'groovytweets_logo.png')}"/>
+      </a>
     </div>
     <div id="bd">
       <!-- body -->
@@ -40,6 +42,7 @@
         <g:link action="list50" class="linkitem">Latest Tweets</g:link>
         <g:link action="listImportant" class="linkitem">Important Tweets</g:link>
         <g:link action="friends" class="linkitem">Friends</g:link>
+        <g:link action="popular" class="linkitem">Popularity</g:link>
         <g:link action="about" class="linkitem">About</g:link>
         <br/>
         <a href="http://feeds.groovytweets.org/latestgroovytweets" target="_blank" class="linkitem">RSS Latest</a>

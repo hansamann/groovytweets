@@ -217,6 +217,30 @@ class CronController
         render "done - got ${mentions.size()} new mentions, found ${count} suggestions"
     }
 
+    def updatePopularity = {
+        log.debug('updatePopularity')
+
+        def replies = []
+        jpaTemplate.execute( { entityManager ->
+                def query = entityManager.createQuery("select reply from org.groovytweets.Reply reply order by reply.replyCount desc")
+                query.maxResults = 20
+                replies = query.resultList
+            } as JpaCallback )
+
+        def base = 'http://chart.apis.google.com/chart?cht=bhs&chs=500x600&chco=FF9900|FF3300&chxt=r,x,t'
+
+        def labels = []
+        def data = []
+        replies.each { labels << it.screenName; data << it.replyCount}
+        def chartURL = base + '&chxl=0:|' + labels.reverse().join('|') + '&chd=t:' + data.join(',')
+
+        //replace & with &amp;
+        chartURL = chartURL.replace('&', '&amp;')
+        memcacheService.put('popularityChartURL', chartURL)
+
+        render('done, current popularityChartURL:<br/>' + chartURL)
+    }
+
     def showTweets = {
         log.debug "showTweets"
         def tweets = twitterService.getTweets()
