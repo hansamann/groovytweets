@@ -86,7 +86,16 @@
                                 <td valign="top" class="value ${hasErrors(bean:tweetInstance,field:'importance','errors')}">
                                     <input type="text" id="importance" name="importance" value="${fieldValue(bean:tweetInstance,field:'importance')}" />
                                 </td>
-                            </tr> 
+                            </tr>
+
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="importance">User Image:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:tweetInstance,field:'userImage','errors')}">
+                                    <input type="text" id="userImage" name="userImage" value="${fieldValue(bean:tweetInstance,field:'userImage')}" />
+                                </td>
+                            </tr>
                         
                         </tbody>
                     </table>

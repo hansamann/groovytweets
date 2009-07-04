@@ -6,8 +6,8 @@
     <schedule>every 1 minutes</schedule>
   </cron>
   <cron>
-    <url>/cron/updateFriends</url>
-    <description>Update friends list every hour</description>
+    <url>/cron/updateFriendsAndFollowers</url>
+    <description>Update friends and followers list every hour</description>
     <schedule>every 1 hours</schedule>
   </cron>
   <cron>

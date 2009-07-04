@@ -78,11 +78,24 @@ class TwitterService {
         def paging = new Paging(page)
         def users = twitter.getFriends(paging)
 
-        if (users.size() < 99)
+        if (users.size() < 90) //call might return less than 100
             return users
         else
             return users + getAllFriends(page+1)
 
+    }
+
+    def getAllFollowers(page = 1)
+    {
+        def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
+
+        def paging = new Paging(page)
+        def users = twitter.getFollowers(paging)
+
+        if (users.size() < 90) //call might return less than 100
+            return users
+        else
+            return users + getAllFollowers(page+1)
     }
 
     def getUserTimeline(screenName)

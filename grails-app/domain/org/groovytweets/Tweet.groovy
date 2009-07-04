@@ -103,4 +103,10 @@ class Tweet {
         //println "final result: ${statusText}"
         return htmlEncoded
     }
+
+    def getRetweetURL()
+    {
+        //http://twitter.com/home/?status=RT+%40TechCrunch+Google+App+Engine+Broken+For+4+Hours+And+Counting+http%3A%2F%2Fcli.gs%2FQNj8Y+%28via+%40tweetmeme%29
+        return 'http://twitter.com/home/?status=' + "RT @${userScreenName}: ${statusText}".encodeAsURL()
+    }
 }

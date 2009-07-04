@@ -112,21 +112,31 @@ class CronController
     }
 
 
-    def updateFriends = {
-        log.debug "updateFriends"
-        def friends = twitterService.getAllFriends() //intializes page to 1
+    def updateFriendsAndFollowers = {
+        log.debug "updateFriendsAndFollowers"
 
+        def friends = twitterService.getAllFriends() //intializes page to 1
         def cacheFriends = friends.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL]}
-        
         memcacheService.put("friends", cacheFriends)
-        render "done - saved friends list to memcache, size: ${cacheFriends.size()}"
+        
+        def followers = twitterService.getAllFollowers() //intializes page to 1
+        def cacheFollowers = followers.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL]}
+        memcacheService.put("followers", cacheFollowers)
+
+        render "done - saved friends(${cacheFriends.size()}) and followers(${cacheFollowers.size()}) to memcache"
     }
 
     def scanRandomUserTimelines = {
-        log.debug "scanUserTimeline"
+        log.debug "scanRandomUserTimelines"
+
+        def sendError = false
+        def model = [:]
+
+        //scan a friend public timeline for other usernames
+        def friends = null
         if (memcacheService.containsKey('friends'))
         {
-            def friends = memcacheService.get('friends')
+            friends = memcacheService.get('friends')
             def screenNameList = friends.collect { it.screenName }
             Collections.shuffle(friends)
 
@@ -148,11 +158,63 @@ class CronController
                }
             }
 
-            [replies:replyMap, user:user]
+            model.replies = replyMap
+            model.user = user
            
         }
         else
-            response.sendError(503, "Friends currently not available in memcache...")
+        {
+            sendError = true
+            mailService.sendAdminMail("[groovytweets] friend public timeline scan FAILED", "memcache does not contain friends list")
+        }
+
+        //scan followers and pick a random public timeline of a user we are not yet following
+        if (memcacheService.containsKey('followers') && friends)
+        {
+            def followers = memcacheService.get('followers')
+
+            def friendScreenNameList = friends.collect { it.screenName }
+            def followersScreenNameList = followers.collect { it.screenName }
+
+            def potentialFriends = followersScreenNameList - friendScreenNameList
+            if (potentialFriends)
+            {
+               Collections.shuffle(potentialFriends)
+               def screenName = potentialFriends[0]
+               def tweets = twitterService.getUserTimeline(screenName)
+               def groovyTweets = tweets.findAll { it.statusText =~ pattern }
+
+               //begin following if the user has tweeted about groovy more than x times for the last 200 tweets we got
+               if (groovyTweets.size() >= 2)
+               {
+                   def newFriend = twitterService.follow(screenName)
+                   if (newFriend)
+                   {
+                        mailService.sendAdminMail("[groovytweets] follower scan, adding ${screenName}", "Added qualifying user ${screenName} based on ${groovyTweets.size()} groovy tweets")
+                   }
+                   else
+                   {
+                        mailService.sendAdminMail("[groovytweets] follower scan, UNABLE to follow ${screenName}", "Tried to add ${screenName} based on ${groovyTweets.size()} groovy tweets, but failed (already following?)")
+                   }  
+               }
+
+               model.potentialFriends = potentialFriends
+               model.potentialFriend = screenName
+               model.followerGroovyTweets = groovyTweets.size()
+            }
+        }
+        else
+        {
+            sendError = true
+            mailService.sendAdminMail("[groovytweets] followers public timeline scan FAILED", "memcache does not contain followers list")
+        }
+
+
+
+        if (sendError)
+            response.sendError(503, "Friends/Followers currently not available in memcache...")
+        else
+            return model
     }
 
     def topTweets24 = {

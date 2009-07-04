@@ -83,6 +83,7 @@ a, a:hover, a:active, a:focus, a:visited {
 .tweet {
     text-align:left;
     width: 500px;
+    min-height: 66px;
     font-size: 167%;
     font-family: georgia;
     padding: 10px;
@@ -100,11 +101,24 @@ a, a:hover, a:active, a:focus, a:visited {
     margin-left: 58px;
 }
 
-.textWrap .userImage {
+.textWrap .icons {
+    width: 48px;
+    height: 58px;
     margin-left: -58px;
     float:left;
+}
+
+.userImage {
     width: 48px;
     height: 48px;
+    float:left;
+}
+
+.retweetImage {
+    margin-top:3px;
+    width: 48px;
+    height: 16px;
+    float:right;
 }
 
 .userScreenName {

@@ -1,9 +1,15 @@
 <g:each in="${tweets}" status="i" var="tweet">
   <div id="tweet${tweet.statusId}" class="tweet importance${tweet.importance}">
     <div class="textWrap">
-      <g:if test="${tweet.userImage}">
-        <img class="userImage" src="${tweet.userImage}"/>
-      </g:if>
+      <div class="icons">
+        <g:if test="${tweet.userImage}">
+          <img class="userImage" src="${tweet.userImage}"/>
+          <a href="${tweet.retweetURL}">
+            <img class="retweetImage" src="${resource(dir:'images/groovytweets',file:'retweet.png')}"/>
+          </a>
+        </g:if>
+        
+      </div>
 
       <g:if test="${tweet.hasRealName()}"
             <span class="userRealName">${tweet.userRealName},</span>
