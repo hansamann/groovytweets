@@ -28,12 +28,13 @@ class TwitterService {
     boolean transactional = true
     def memcacheService
 
+    /*
+        Returns the tweets in order they were tweeted, this means NOT the latest first.
+    */
+    
     def getTweets() {
 
         def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
-
-        def stat = twitter.rateLimitStatus()
-        log.info ("remainingHits ${stat.remainingHits}/ hourlyLimit ${stat.hourlyLimit}/ resetTimeInSeconds ${stat.resetTimeInSeconds}}")
 
         def tweets = []
 
@@ -46,15 +47,7 @@ class TwitterService {
         else
             paging = new Paging()
 
-        def statuses = twitter.getFriendsTimeline(paging)
-
-        //it seems the first in teh list is always the latest, so we can save this computation?
-        def latest = statuses.max {a,b-> a == b? 0: a.id<b.id ? -1: 1}
-	if (latest) {
-		log.info "Latest Status: ${latest.id} - ${latest.user.screenName} - ${latest.text}"
-		//set latest status id in memcache
-                memcacheService.put(memKey, (Long)latest.id)
-	}
+        def statuses = twitter.getFriendsTimeline(paging).sort {a, b -> a.id <=> b.id}
 
         statuses.each
         {
@@ -195,6 +188,12 @@ class TwitterService {
             log.info("Less than 65 remaining hits this hour, not getting mentions")
             return []
         }
+    }
+
+    def getRateLimitStatus()
+    {
+        def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
+        return twitter.rateLimitStatus()
     }
 
 }

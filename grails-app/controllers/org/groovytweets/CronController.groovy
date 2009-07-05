@@ -39,12 +39,18 @@ class CronController
 
     def updateTweets = {
         log.debug "updateTweets..."
-        def tweets = twitterService.getTweets().reverse()
-        log.info "got ${tweets.size()} tweets..."
-        
-        
+
+        def tweets = twitterService.getTweets()
+        log.info "got ${tweets.size()} tweets..." 
 
         def groovyTweets = tweets.findAll { it.statusText =~ pattern }
+
+        //if there are tweets but no groovyweets were found
+        if (!groovyTweets && tweets)
+        {
+            //update lastKnownStatusId with the latest tweet so we do not check these tweets again
+            memcacheService.put('lastKnownStatusId', (Long)tweets[-1].statusId)
+        }
 
         def added = 0
         def replyCount = 0
@@ -53,14 +59,13 @@ class CronController
             if (!statusExists(tweet.statusId))
             {
                 replyCount += logAt(tweet)
-
                 def retweetResult = isRetweet(tweet)
                 if (retweetResult)
                 {
                     //this is a RT
                     //... is allowed to truncate oversize original messages
                     if (retweetResult.text && retweetResult.text.endsWith('...'))
-                        retweetResult.text = retweetResult.text[0..-4] //remove ...
+                    retweetResult.text = retweetResult.text[0..-4] //remove ...
 
                     //find original(s)
                     def existingTweets = findExistingTweets(retweetResult.text, retweetResult.screenName)
@@ -99,15 +104,17 @@ class CronController
                 else if (!tweet.statusText.startsWith('RT'))
                 {
                     transactionTemplate.execute(
-                    { status ->
-                        jpaTemplate.persist(tweet)
-                        jpaTemplate.flush()
-                        added++
-                    } as TransactionCallback )
+                        { status ->
+                            jpaTemplate.persist(tweet)
+                            jpaTemplate.flush()
+                            added++
+                        } as TransactionCallback )
                 }
             }
-        }
 
+            //with each iteration, update the lastKnownStatusId
+            memcacheService.put('lastKnownStatusId', (Long)tweet.statusId)
+        } //end each
         render "done - added ${added} tweets, logged @replies: ${replyCount}"
     }
 
@@ -147,15 +154,15 @@ class CronController
             def replyMap = getReplyMap(groovyTweets).findAll { !(it.key in screenNameList) && it.value >= 3 }
 
             replyMap.each { screenName, mentions ->
-               def newFriend = twitterService.follow(screenName)
-               if (newFriend)
-               {
+                def newFriend = twitterService.follow(screenName)
+                if (newFriend)
+                {
                     mailService.sendAdminMail("[groovytweets] user scan, adding ${screenName}", "Scanned ${user.screenName}, now adding qualifying user ${screenName} based on ${mentions} mentions")
-               }
-               else
-               {
+                }
+                else
+                {
                     mailService.sendAdminMail("[groovytweets] user scan, UNABLE to follow ${screenName}", "Scanned ${user.screenName}, tried to add ${screenName} based on ${mentions} mentions, but failed (already following?)")
-               }
+                }
             }
 
             model.replies = replyMap
@@ -179,28 +186,28 @@ class CronController
             def potentialFriends = followersScreenNameList - friendScreenNameList
             if (potentialFriends)
             {
-               Collections.shuffle(potentialFriends)
-               def screenName = potentialFriends[0]
-               def tweets = twitterService.getUserTimeline(screenName)
-               def groovyTweets = tweets.findAll { it.statusText =~ pattern }
+                Collections.shuffle(potentialFriends)
+                def screenName = potentialFriends[0]
+                def tweets = twitterService.getUserTimeline(screenName)
+                def groovyTweets = tweets.findAll { it.statusText =~ pattern }
 
-               //begin following if the user has tweeted about groovy more than x times for the last 200 tweets we got
-               if (groovyTweets.size() >= 2)
-               {
-                   def newFriend = twitterService.follow(screenName)
-                   if (newFriend)
-                   {
+                //begin following if the user has tweeted about groovy more than x times for the last 200 tweets we got
+                if (groovyTweets.size() >= 2)
+                {
+                    def newFriend = twitterService.follow(screenName)
+                    if (newFriend)
+                    {
                         mailService.sendAdminMail("[groovytweets] follower scan, adding ${screenName}", "Added qualifying user ${screenName} based on ${groovyTweets.size()} groovy tweets")
-                   }
-                   else
-                   {
+                    }
+                    else
+                    {
                         mailService.sendAdminMail("[groovytweets] follower scan, UNABLE to follow ${screenName}", "Tried to add ${screenName} based on ${groovyTweets.size()} groovy tweets, but failed (already following?)")
-                   }  
-               }
+                    }
+                }
 
-               model.potentialFriends = potentialFriends
-               model.potentialFriend = screenName
-               model.followerGroovyTweets = groovyTweets.size()
+                model.potentialFriends = potentialFriends
+                model.potentialFriend = screenName
+                model.followerGroovyTweets = groovyTweets.size()
             }
         }
         else
@@ -212,9 +219,9 @@ class CronController
 
 
         if (sendError)
-            response.sendError(503, "Friends/Followers currently not available in memcache...")
+        response.sendError(503, "Friends/Followers currently not available in memcache...")
         else
-            return model
+        return model
     }
 
     def topTweets24 = {
@@ -330,6 +337,11 @@ class CronController
 
     }
 
+    def showRateLimitStatus = {
+        def stat = twitterService.getRateLimitStatus()
+        render("remainingHits ${stat.remainingHits}/ hourlyLimit ${stat.hourlyLimit}/ resetTimeInSeconds ${stat.resetTimeInSeconds}")
+    }
+
     def latest = {
         def  tweetInstanceList =[]
         def total = 0
@@ -437,7 +449,7 @@ class CronController
     {
         //we do not count our own retweets!
         if (tweet.userScreenName == 'groovytweets')
-            return null
+        return null
 
 
         def m
@@ -515,7 +527,7 @@ class CronController
 
             //we do not track ourselves :-)
             if (screenName == 'groovytweets')
-                return 0
+            return 0
 
             //lookup screenName in ScreenName entity
             transactionTemplate.execute(
@@ -559,12 +571,12 @@ class CronController
                 def screenName = it[1]
 
                 if (screenName == 'groovytweets')
-                    return
+                return
 
                 if (result[screenName])
-                    result[screenName] = result[screenName] + 1
+                result[screenName] = result[screenName] + 1
                 else
-                    result[screenName] = 1
+                result[screenName] = 1
             }
         }
         return result
