@@ -7,7 +7,7 @@
         <script>
           var loader = new YAHOO.util.YUILoader({
 
-              require: ["logger", "dom", "event", "json", "connection","animation", "reset", "fonts", "grids"],
+              require: ["logger", "dom", "event", "json", "container","connection","animation", "reset", "fonts", "grids"],
               loadOptional: true,
               onSuccess: function() {
                   YAHOO.widget.Logger.enableBrowserConsole();
@@ -17,12 +17,62 @@
                   YAHOO.lang.later(30000, this, function() {
                     YAHOO.lang.later(60000, this, pullRelevances, null, true);
                   }, null, false);
+
+                  YAHOO.lang.later(500, this, initInfoOverlay, null, false);
               },
               timeout: 10000,
               combine: true
           });
 
           loader.insert();
+
+          function initInfoOverlay()
+          {
+            YAHOO.log('initInfoOverlay()');
+            YAHOO.gt.info = new YAHOO.widget.Overlay("info");
+            YAHOO.gt.info.render();
+            YAHOO.gt.info.hide();
+
+            //positioning
+            //myOverlay.cfg.setProperty("x", 100);
+            //myOverlay.cfg.setProperty("y", 200);
+
+
+            //register onMouseOver and onMouseOut on all user icons
+            //get all images of class userImage
+            var userImages = YAHOO.util.Dom.getElementsByClassName('userImage', 'img', 'tweetWrapper' + YAHOO.gt.latestStatusId, function(element) {
+              //YAHOO.log(element);
+              YAHOO.util.Event.on(element, 'mouseover', showOverlay);
+              YAHOO.util.Event.on(element, 'mouseout', hideOverlay);
+            });
+            YAHOO.log('added events to ' + userImages.length + ' images');
+
+          }
+
+          function showOverlay()
+          {
+            //YAHOO.log('showOverlay: ' + this.src);
+            YAHOO.util.Dom.setStyle('info', 'opacity', '0');
+            YAHOO.gt.info.cfg.setProperty("context", [this, "tl", "bl"]);
+            YAHOO.gt.info.show();
+
+            //animate opacity
+            var anim = new YAHOO.util.Anim('info', {
+              opacity: { to: 1 }
+            }, 0.5, YAHOO.util.Easing.easeOut);
+            anim.animate();
+
+          }
+
+          function hideOverlay()
+          {
+            //YAHOO.log('hideOverlay: ' + this.src);
+            var anim = new YAHOO.util.Anim('info', {
+              opacity: { to: 0 }
+            }, 0.25, YAHOO.util.Easing.easeOut);
+            anim.onComplete.subscribe(function() { YAHOO.gt.info.hide(); });
+            anim.animate();
+          }
 
           function pullTweets()
           {
@@ -125,5 +175,19 @@
     <div id="tweetWrapper${tweets[0].statusId}">
     <g:render template="tweets" model="['tweets':tweets]"/>
     </div>
+
+    <!-- Info Overlay -->
+    <div id="info">
+      <div id="inforect" class="bd">
+        <img id="infoarrow" src="${resource(dir:'images/groovytweets',file:'infoarrow.png')}"/>
+        place content place content here
+        place content here content here
+        place content place content here
+        place content here content here
+         
+      </div>
+    </div>
+
+
     </body>
 </html>

@@ -137,6 +137,27 @@ a, a:hover, a:active, a:focus, a:visited {
     
 }
 
+#info {
+}
+
+#infoarrow {
+ margin-top: -20px;
+ float:left;
+}
+
+#inforect {
+    margin-top:15px; padding: 5px;
+    width: 250px;
+    background: white;
+    border: 3px solid #969696;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+    -moz-border-radius-bottomleft: 8px;
+    -webkit-border-top-right-radius: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+}
+
 .importance0 {
     background-color: #E8E8E8;
 }
