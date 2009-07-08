@@ -123,11 +123,11 @@ class CronController
         log.debug "updateFriendsAndFollowers"
 
         def friends = twitterService.getAllFriends() //intializes page to 1
-        def cacheFriends = friends.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL]}
+        def cacheFriends = friends.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL, followersCount:it.followersCount, friendsCount:it.friendsCount, statusesCount:it.statusesCount, location:it.location, description:it.description, url:it.URL ]}
         memcacheService.put("friends", cacheFriends)
         
         def followers = twitterService.getAllFollowers() //intializes page to 1
-        def cacheFollowers = followers.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL]}
+        def cacheFollowers = followers.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL, followersCount:it.followersCount, friendsCount:it.friendsCount, statusesCount:it.statusesCount, location:it.location, description:it.description, url:it.URL ]}
         memcacheService.put("followers", cacheFollowers)
 
         render "done - saved friends(${cacheFriends.size()}) and followers(${cacheFollowers.size()}) to memcache"

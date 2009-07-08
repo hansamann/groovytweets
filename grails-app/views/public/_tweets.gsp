@@ -3,8 +3,8 @@
     <div class="textWrap">
       <div class="icons">
         <g:if test="${tweet.userImage}">
-          <img class="userImage" src="${tweet.userImage}"/>
-          <a href="${tweet.retweetURL}">
+          <img class="userImage" src="${tweet.userImage}" alt="${tweet.userScreenName}"/>
+          <a target="_blank" href="${tweet.retweetURL}">
             <img class="retweetImage" src="${resource(dir:'images/groovytweets',file:'retweet.png')}"/>
           </a>
         </g:if>

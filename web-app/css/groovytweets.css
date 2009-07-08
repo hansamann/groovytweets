@@ -158,6 +158,23 @@ a, a:hover, a:active, a:focus, a:visited {
     -webkit-border-bottom-left-radius: 8px;
 }
 
+.follow
+{
+    font-style: italic;
+    font-size: 123.1%;
+    font-family: georgia;
+    margin-top: 5px;
+    text-align: center;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    padding: 5px;
+    background: #23d523;
+}
+
+.key {
+    font-weight: bolder;
+}
+
 .importance0 {
     background-color: #E8E8E8;
 }

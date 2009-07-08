@@ -93,6 +93,20 @@ class PublicController {
             } as JpaCallback )
     }
 
+    def pullInfo = {
+        if (memcacheService.containsKey('friends') && params.id)
+        {
+            def friends = memcacheService.get('friends')
+            def friend = friends.find { it.screenName == params.id }
+            if (friend)
+                render friend as JSON
+            else
+                render "-1"
+        }
+        else
+            render "-1";
+    }
+
     def friends = {
         if (memcacheService.containsKey('friends'))
             [friends:memcacheService.get('friends')]
