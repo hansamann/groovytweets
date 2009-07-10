@@ -130,7 +130,11 @@ class CronController
         def cacheFollowers = followers.collect { [id:it.id, name:it.name, screenName:it.screenName, profileImageURL:it.profileImageURL, followersCount:it.followersCount, friendsCount:it.friendsCount, statusesCount:it.statusesCount, location:it.location, description:it.description, url:it.URL ]}
         memcacheService.put("followers", cacheFollowers)
 
-        render "done - saved friends(${cacheFriends.size()}) and followers(${cacheFollowers.size()}) to memcache"
+        //user Config for this setting
+        def self = twitterService.getUserDetail('groovytweets')
+        memcacheService.put("self", [id:self.id, name:self.name, screenName:self.screenName, profileImageURL:self.profileImageURL, followersCount:self.followersCount, friendsCount:self.friendsCount, statusesCount:self.statusesCount, location:self.location, description:self.description, url:self.URL ])
+    
+        render "done - saved friends(${cacheFriends.size()}) and followers(${cacheFollowers.size()})  and own user (self) to memcache"
     }
 
     def scanRandomUserTimelines = {

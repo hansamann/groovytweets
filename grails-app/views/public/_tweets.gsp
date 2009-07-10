@@ -17,5 +17,6 @@
       <span class="userScreenName"><a class="screenNameLink" target="_blank" href="http://twitter.com/${tweet.userScreenName}">${tweet.userScreenName}</a>:</span>
       <span class="statusText">${tweet.encodedStatusText}</span>
     </div>
+    <div id="meta${tweet.statusId}" class="meta">added ${tweet.prettyAdded}</div>
   </div>
 </g:each>

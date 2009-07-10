@@ -15,7 +15,7 @@
                   YAHOO.gt.latestStatusId = ${tweets[0].statusId}
                   YAHOO.lang.later(60000, this, pullTweets, null, true);
                   YAHOO.lang.later(30000, this, function() {
-                    YAHOO.lang.later(60000, this, pullRelevances, null, true);
+                    YAHOO.lang.later(60000, this, pullMeta, null, true);
                   }, null, false);
 
                   YAHOO.lang.later(500, this, initInfoOverlay, null, false);
@@ -196,7 +196,7 @@
 
           }
 
-          function pullRelevances()
+          function pullMeta()
           {
             var tweetDivs = YAHOO.util.Dom.getElementsByClassName('tweet', 'div')
             var tweetCount = tweetDivs.length
@@ -205,41 +205,47 @@
             var callback =
             {
               success: function(o) {
-                var relevances;
+                var meta;
                 
                 try {
-                    relevances = YAHOO.lang.JSON.parse(o.responseText);
+                    meta = YAHOO.lang.JSON.parse(o.responseText);
                 }
                 catch (e) {
                     YAHOO.log('Unable to parse statusId/relevance map');
                     return;
                 }
 
-                for (pos in relevances)
+                for (pos in meta)
                 {
-                  var statusId = relevances[pos][0];
-                  var relevance = relevances[pos][1];
+                  var statusId = meta[pos][0];
+                  var relevance = meta[pos][1];
+                  var prettyAdded = meta[pos][2];
 
+                  //update relevance
                   var tweetNode = YAHOO.util.Dom.get('tweet'+statusId);
-
-                  if (!tweetNode)
+                  var metaNode = YAHOO.util.Dom.get('meta'+statusId);
+                  if (!tweetNode || !metaNode)
                   {
-                    YAHOO.log('Unable to find tweet' + statusId + '... tweet added to db since last tweet poll?');
-                    return;
+                    YAHOO.log('Unable to find tweet/meta ' + statusId + '... tweet added to db since last tweet poll?');
                   }
                   else
                   {
+                    //update relevances
                     //YAHOO.log('Updating tweet' + statusId);
+                    for (var i = relevance; i >= 0; i--)
+                    {
+                      //YAHOO.log("Removing class importance" + i);
+                      YAHOO.util.Dom.removeClass(tweetNode, 'importance'+i);
+                    }
+
+                    YAHOO.util.Dom.addClass(tweetNode, 'importance'+ relevance);
+                    //YAHOO.log('Adding class importance' + relevance);
+
+                    //update meta
+                    metaNode.innerHTML = prettyAdded;
                   }
 
-                  for (var i = relevance; i >= 0; i--)
-                  {
-                    //YAHOO.log("Removing class importance" + i);
-                    YAHOO.util.Dom.removeClass(tweetNode, 'importance'+i);
-                  }
 
-                  YAHOO.util.Dom.addClass(tweetNode, 'importance'+ relevance);
-                  //YAHOO.log('Adding class importance' + relevance);
                 }
 
               },
@@ -248,7 +254,7 @@
             }
 
 
-            var transaction = YAHOO.util.Connect.asyncRequest('GET', '/public/pullRelevances/'+ tweetCount, callback);
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', '/public/pullMeta/'+ tweetCount, callback);
 
           }
 

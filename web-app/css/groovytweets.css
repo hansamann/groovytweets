@@ -81,12 +81,12 @@ a, a:hover, a:active, a:focus, a:visited {
 }
 
 .tweet {
+    position: relative;
     text-align:left;
     width: 500px;
     min-height: 66px;
-    font-size: 167%;
     font-family: georgia;
-    padding: 10px;
+    padding: 10px 10px 15px 10px;
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: auto;
@@ -99,6 +99,7 @@ a, a:hover, a:active, a:focus, a:visited {
 
 .textWrap {
     margin-left: 58px;
+    font-size: 167%;
 }
 
 .textWrap .icons {
@@ -156,6 +157,22 @@ a, a:hover, a:active, a:focus, a:visited {
     -webkit-border-top-right-radius: 8px;
     -webkit-border-bottom-right-radius: 8px;
     -webkit-border-bottom-left-radius: 8px;
+}
+
+.meta {
+    position:absolute;
+    right:0;
+    bottom:0;
+    background:#969696;
+    padding-left: 4px;
+    padding-right:2px;
+    padding-top:1px;
+    padding-bottom:1px;
+    font-size: 85%;
+    font-style: italic;
+    text-align:right;
+    -moz-border-radius-topleft: 8px;
+    -webkit-border-top-left-radius: 8px;
 }
 
 .follow

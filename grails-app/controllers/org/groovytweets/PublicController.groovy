@@ -54,7 +54,7 @@ class PublicController {
 
     def pullTweets = {
         //unknown bug, maybe some browsers have problems with the list50.gsp page/javascript
-        if (params.id == 'undefined')
+        if (!params.id || params.id == 'undefined')
         return
 
         def latest = params.id.toLong()
@@ -79,29 +79,43 @@ class PublicController {
     }
 
 
-    def pullRelevances = {
+    def pullMeta = {
         jpaTemplate.execute( { entityManager ->
+                if (!params.id || params.id == 'undefined')
+                    return
+
                 def tweetCount = params.id.toLong()
 
                 if (tweetCount > 150)
-                tweetCount = 150
+                    tweetCount = 150
 
                 def query = entityManager.createQuery("select tweet from org.groovytweets.Tweet tweet order by tweet.statusId desc")
                 query.maxResults = tweetCount
-                def statusRelevanceMap = query.resultList.collect {tweet -> [tweet.statusId, tweet.importance]}
-                render statusRelevanceMap as JSON
+                def meta = query.resultList.collect {tweet -> [tweet.statusId, tweet.importance, tweet.prettyAdded]}
+                render meta as JSON
             } as JpaCallback )
     }
 
     def pullInfo = {
         if (memcacheService.containsKey('friends') && params.id)
         {
-            def friends = memcacheService.get('friends')
-            def friend = friends.find { it.screenName == params.id }
-            if (friend)
-                render friend as JSON
+            if (params.id == 'groovytweets')
+            {
+                def self = memcacheService.get('self')
+                if (self)
+                    render self as JSON
+                else
+                    render "-1"
+            }
             else
-                render "-1"
+            {
+                def friends = memcacheService.get('friends')
+                def friend = friends.find { it.screenName == params.id }
+                if (friend)
+                    render friend as JSON
+                else
+                    render "-1"
+                }
         }
         else
             render "-1";

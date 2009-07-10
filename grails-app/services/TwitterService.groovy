@@ -196,4 +196,10 @@ class TwitterService {
         return twitter.rateLimitStatus()
     }
 
+    def getUserDetail(screenName)
+    {
+        def twitter = new Twitter(ConfigurationHolder.config.twitterUsername, ConfigurationHolder.config.twitterPassword)
+        return twitter.getUserDetail(screenName)
+    }
+
 }
