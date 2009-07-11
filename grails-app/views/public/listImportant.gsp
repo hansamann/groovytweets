@@ -7,15 +7,27 @@
         <script>
           var loader = new YAHOO.util.YUILoader({
 
-              require: ["logger", "dom", "event", "json", "connection","animation", "reset", "fonts", "grids"],
+              require: ["logger", "yahoo", "reset", "fonts", "grids"],
               loadOptional: true,
               onSuccess: function() {
                   YAHOO.widget.Logger.enableBrowserConsole();
-                  YAHOO.namespace("gt")
+                  YAHOO.namespace("gt");
+
+                  YAHOO.gt.latestStatusId = ${tweets[0].statusId}
+                  YAHOO.lang.later(500, this, initInfoOverlay, null, false);
               },
               timeout: 10000,
               combine: true
           });
+
+          loader.addModule({
+                  name: "infobox",
+                  type: "js",
+                  fullpath: "/js/groovytweets/infobox.js",
+                  requires: ['yahoo', 'event', 'container', 'animation', 'connection', 'json', 'dom']
+          });
+
+          loader.require('infobox');
 
           loader.insert();
 
@@ -30,5 +42,8 @@
       <g:render template="tweets" model="['tweets':tweets]"/>
       </div>
     </g:if>
+
+    <g:render template="infobox"/>
+    
     </body>
 </html>

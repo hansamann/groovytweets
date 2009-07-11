@@ -7,7 +7,7 @@
         <script>
           var loader = new YAHOO.util.YUILoader({
 
-              require: ["logger", "dom", "event", "json", "container","connection","animation", "reset", "fonts", "grids"],
+              require: ["logger", "yahoo", "dom", "event", "json", "container","connection","animation", "reset", "fonts", "grids"],
               loadOptional: true,
               onSuccess: function() {
                   YAHOO.widget.Logger.enableBrowserConsole();
@@ -24,127 +24,17 @@
               combine: true
           });
 
+          loader.addModule({
+                  name: "infobox",
+                  type: "js",
+                  fullpath: "/js/groovytweets/infobox.js",
+                  requires: ['yahoo', 'event', 'container', 'animation', 'connection', 'json', 'dom']
+          });
+
+          loader.require('infobox');
+
           loader.insert();
 
-          function initInfoOverlay()
-          {
-            YAHOO.log('initInfoOverlay()');
-            YAHOO.gt.info = new YAHOO.widget.Overlay("info");
-            YAHOO.gt.info.render();
-            YAHOO.gt.info.hide();
-
-            //register onMouseOver and onMouseOut on all user icons
-            //get all images of class userImage
-            var userImages = YAHOO.util.Dom.getElementsByClassName('userImage', 'img', 'tweetWrapper' + YAHOO.gt.latestStatusId, function(element) {
-              //YAHOO.log(element);
-              YAHOO.util.Event.on(element, 'mouseover', showOverlay);
-              YAHOO.util.Event.on(element, 'mouseout', hideOverlay);
-            });
-            YAHOO.log('added events to ' + userImages.length + ' images');
-
-            YAHOO.util.Event.on('info', 'mouseover', showOverlay);
-            YAHOO.util.Event.on('info', 'mouseout', hideOverlay);
-
-          }
-
-          function showOverlay(event, deferred)
-          {
-            deferred = deferred || false;
-            YAHOO.log('showOverlay: deferred=' + deferred);
-
-            if (deferred)
-            {
-              YAHOO.util.Dom.setStyle('infocontent', 'display', 'none');
-              YAHOO.util.Dom.setStyle('waiting', 'display', 'block');
-
-              YAHOO.util.Dom.setStyle('info', 'opacity', '0');
-              YAHOO.gt.info.cfg.setProperty("context", [this, "tl", "bl"]);
-              YAHOO.gt.info.show();
-
-              //animate opacity
-              var anim = new YAHOO.util.Anim('info', {
-                opacity: { to: 1 }
-              }, 0.5, YAHOO.util.Easing.easeOut);
-              anim.animate();
-
-              //request content
-              YAHOO.log('Requesting info for: ' + this.alt);
-              var callback =
-              {
-                success: function(o) {
-                  if (o.responseText != "-1")
-                  {
-                    var info;
-                    try {
-                        info = YAHOO.lang.JSON.parse(o.responseText);
-                    }
-                    catch (e) {
-                        YAHOO.log('Unable to parse user info map');
-                        return;
-                    }
-
-                    //change content
-                    YAHOO.util.Dom.get('followersCount').innerHTML = info.followersCount;
-                    YAHOO.util.Dom.get('friendsCount').innerHTML = info.friendsCount;
-                    YAHOO.util.Dom.get('location').innerHTML = info.location;
-                    YAHOO.util.Dom.get('web').innerHTML = '<a target="_blank" href="'+info.url+'">' + info.url + '</a>';
-                    YAHOO.util.Dom.get('bio').innerHTML = info.description;
-                    YAHOO.util.Dom.get('followLink').innerHTML = '<a target="_blank" href="http://twitter.com/'+info.screenName+'">follow ' + info.screenName + '</a>';
-
-
-                    //make infocontent visible and hide waiting
-                    YAHOO.util.Dom.setStyle('infocontent', 'display', 'block');
-                    YAHOO.util.Dom.setStyle('waiting', 'display', 'none');
-
-                  }
-
-                },
-                failure: function(o) { YAHOO.log('Oops. Something went wrong, cannot pull user info.'); },
-                argument: null
-              }
-
-
-              var transaction = YAHOO.util.Connect.asyncRequest('GET', '/public/pullInfo/'+ this.alt, callback);
-
-            }
-            else
-            {
-              if (YAHOO.gt.infoShowTimer)
-                YAHOO.gt.infoShowTimer.cancel();
-              
-              if (YAHOO.gt.infoHideTimer)
-                YAHOO.gt.infoHideTimer.cancel();
-
-              if (this.id !== 'info' && YAHOO.util.Dom.getStyle('info', 'visibility') == 'hidden')
-                YAHOO.gt.infoShowTimer = YAHOO.lang.later(500, this, showOverlay, [event, true], false);
-            }
-
-          }
-
-          function hideOverlay(event, deferred)
-          {
-            deferred = deferred || false;
-            YAHOO.log('hideOverlay: deferred=' + deferred);
-
-            if (YAHOO.gt.infoShowTimer)
-              YAHOO.gt.infoShowTimer.cancel();
-
-            if (deferred)
-            {
-              var anim = new YAHOO.util.Anim('info', {
-                opacity: { to: 0 }
-              }, 0.25, YAHOO.util.Easing.easeOut);
-              anim.onComplete.subscribe(function() { YAHOO.gt.info.hide(); });
-              anim.animate();
-            }
-            else
-            {
-              if (YAHOO.gt.infoHideTimer)
-                YAHOO.gt.infoHideTimer.cancel();
-
-              YAHOO.gt.infoHideTimer = YAHOO.lang.later(500, this, hideOverlay, [event, true], false);
-            }
-          }
 
           function pullTweets()
           {
@@ -268,22 +158,7 @@
     <g:render template="tweets" model="['tweets':tweets]"/>
     </div>
 
-    <!-- Info Overlay -->
-    <div id="info">
-      <div id="inforect" class="bd">
-        <img id="infoarrow" src="${resource(dir:'images/groovytweets',file:'infoarrow.png')}"/>
-        <div id="waiting" style="text-align:right;">
-          <img src="${resource(dir:'images/groovytweets',file:'spinner.gif')}"/>
-        </div>
-        <div id="infocontent" style="display:none;">
-        <span class="key" id="followersCount">12345</span> followers / <span class="key" id="friendsCount">80</span> friends<br/>
-        <span class="key">Location</span> <span id="location">Munich, Germany</span><br/>
-        <span class="key">Web</span> <span id="web"><a href="http://graemerocher.blogspot.com/" target="_blank">http://graemerocher.blogspot.com/</a></span><br/>
-        <span class="key">Bio</span> <span id="bio">Head of Grails Development at SpringSource</span>
-        <div class="follow" id="followLink"><a target="_blank" href="http://twitter.com/hansamann">follow hansamann</a></div>
-        </div>
-      </div>
-    </div>
+    <g:render template="infobox"/>
 
 
     </body>
